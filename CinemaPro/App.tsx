@@ -1,9 +1,18 @@
 import React from 'react';
-import AppNavigator from './src/navigation/AppNavigator';
+import { StatusBar } from 'react-native';
+import AppNavigator from './src/navigation/AppNavigator'; 
+import { colors } from './src/theme/colors';
 
 const App = () => {
-  return <AppNavigator />;
+  return (
+    <>
+      <StatusBar 
+        barStyle="light-content" 
+        backgroundColor={colors.background} 
+      />
+      <AppNavigator />
+    </>
+  );
 };
 
 export default App;
-

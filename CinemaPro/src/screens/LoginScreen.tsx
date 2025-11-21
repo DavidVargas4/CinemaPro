@@ -17,6 +17,7 @@ export const LoginScreen = () => {
     const tempErrors: any = {};
 
     const emailRegex = /\S+@\S+\.\S+/;
+
     if (!emailRegex.test(email)) {
       tempErrors.email = 'Ingresa un correo válido';
       valid = false;
@@ -35,14 +36,14 @@ export const LoginScreen = () => {
     if (validate()) {
       navigation.replace('Main');
     } else {
-      Alert.alert('Error', 'Por favor revisa los campos');
+      Alert.alert('Error', 'Por favor revisa los campos marcados en rojo.');
     }
   };
 
   return (
     <View style={styles.container}>
       <Image
-        source={require('../../assets/icon.png')} // ← Esta ruta está bien en tu proyecto
+        source={require('../../assets/logo_app.png')} 
         style={styles.logo}
         resizeMode="contain"
       />
@@ -54,9 +55,9 @@ export const LoginScreen = () => {
         placeholder="usuario@cine.com"
         value={email}
         onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
         error={errors.email}
+        keyboardType="email-address"
+        autoCapitalize="none" 
       />
 
       <CustomInput
@@ -64,12 +65,28 @@ export const LoginScreen = () => {
         placeholder="******"
         value={password}
         onChangeText={setPassword}
-        isPassword={true}
         error={errors.password}
+        isPassword={true}
       />
 
-      <CustomButton title="Iniciar Sesión" onPress={handleLogin} />
-      <CustomButton title="Crear Cuenta" variant="secondary" onPress={() => {}} />
+      <CustomButton 
+        title="Iniciar Sesión" 
+        onPress={handleLogin} 
+      />
+      
+      <CustomButton 
+        title="Crear Cuenta" 
+        variant="secondary" 
+        onPress={() => Alert.alert('Info', 'Funcionalidad de registro pendiente')} 
+      />
+
+      <CustomButton 
+        title="Crear Cuenta" 
+        variant="secondary" 
+        // CAMBIAR ESTO:
+        onPress={() => navigation.navigate('Register')} 
+      />
+
     </View>
   );
 };
@@ -79,9 +96,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
     padding: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'center', 
+    alignItems: 'center',     
   },
-  logo: { width: 120, height: 120, marginBottom: 20, tintColor: colors.primary },
-  title: { fontSize: 32, color: colors.primary, fontWeight: 'bold', marginBottom: 40 },
+  logo: {
+    width: 120,
+    height: 120,
+    marginBottom: 20,
+    tintColor: colors.primary, 
+  },
+  title: {
+    fontSize: 32,
+    color: colors.primary,
+    fontWeight: 'bold',
+    marginBottom: 40,
+  },
 });

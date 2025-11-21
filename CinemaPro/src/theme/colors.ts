@@ -1,10 +1,10 @@
 export const colors = {
-  background: '#121212', // Fondo oscuro (Cine)
-  surface: '#1E1E1E',
-  primary: '#E50914',    // Rojo tipo Netflix/Cine
-  secondary: '#FFA500',  // Naranja para Snacks/VIP
-  text: '#FFFFFF',
-  textDim: '#AAAAAA',
-  error: '#CF6679',
-  success: '#03DAC6',
+  background: '#121212', // fondo para modo cine
+  surface: '#1E1E1E', // tarjetas y paneles
+  primary: '#E50914',    // para Botones/Acciones principales
+  secondary: '#FFA500',  // para Snacks/VIP
+  text: '#FFFFFF',  // texto principal
+  textDim: '#AAAAAA', // texto secundario
+  error: '#CF6679', 
+  success: '#03DAC6', // mensajes de éxito
 };

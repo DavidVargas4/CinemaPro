@@ -4,9 +4,17 @@ import { useNavigation } from '@react-navigation/native';
 import { colors } from '../theme/colors';
 
 const MOVIES = [
-  { id: '1', title: 'Interestelar', genre: 'Sci-Fi', vip: true },
-  { id: '2', title: 'El Padrino', genre: 'Drama', vip: false },
-  { id: '3', title: 'Avengers', genre: 'Action', vip: true },
+  { id: '1', title: 'Frankenstein', genre: 'Sci-Fi', vip: true, 
+    poster: 'https://s3.amazonaws.com/nightjarprod/content/uploads/sites/130/2025/08/31180656/frankenstein-2025-poster.jpg'
+   },
+
+  { id: '2', title: 'Wicked: For Good', genre: 'Drama', vip: false,
+    poster: 'https://cdn.cinematerial.com/p/297x/vnc0anwp/wicked-for-good-movie-poster-md.jpg?v=1761059702'
+   },
+
+  { id: '3', title: 'Now You See Me: Now You Dont', genre: 'Crime', vip: true,
+    poster: 'https://m.media-amazon.com/images/M/MV5BYmZmZDc1Y2EtMmU2MS00NmMzLTllZmYtNjlkODFkNjZlOGE0XkEyXkFqcGc@._V1_QL75_UX190_CR0,0,190,281_.jpg'
+   },
 ];
 
 export const HomeScreen = () => {
@@ -50,7 +58,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    paddingTop: 50, // Reemplazo de SafeAreaView
+    paddingTop: 50, 
     paddingHorizontal: 20,
   },
   headerTitle: { color: colors.text, fontSize: 28, fontWeight: 'bold', marginBottom: 10 },
