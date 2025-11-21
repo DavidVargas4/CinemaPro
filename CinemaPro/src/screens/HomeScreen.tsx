@@ -4,9 +4,9 @@ import { useNavigation } from '@react-navigation/native';
 import { colors } from '../theme/colors';
 
 const MOVIES = [
-  { id: '1', title: 'Avatar', genre: 'Sci-Fi', vip: true },
-  { id: '2', title: 'Wicked For Good', genre: 'Drama', vip: false },
-  { id: '3', title: 'Black Phone 2', genre: 'Horror', vip: true },
+  { id: '1', title: 'Interestelar', genre: 'Sci-Fi', vip: true },
+  { id: '2', title: 'El Padrino', genre: 'Drama', vip: false },
+  { id: '3', title: 'Avengers', genre: 'Action', vip: true },
 ];
 
 export const HomeScreen = () => {
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    paddingTop: 50, 
+    paddingTop: 50, // Reemplazo de SafeAreaView
     paddingHorizontal: 20,
   },
   headerTitle: { color: colors.text, fontSize: 28, fontWeight: 'bold', marginBottom: 10 },
