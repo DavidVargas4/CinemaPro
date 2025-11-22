@@ -80,13 +80,6 @@ export const LoginScreen = () => {
         onPress={() => Alert.alert('Info', 'Funcionalidad de registro pendiente')} 
       />
 
-      <CustomButton 
-        title="Crear Cuenta" 
-        variant="secondary" 
-        // CAMBIAR ESTO:
-        onPress={() => navigation.navigate('Register')} 
-      />
-
     </View>
   );
 };
