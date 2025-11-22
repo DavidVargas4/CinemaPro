@@ -8,15 +8,9 @@ import { CustomButton } from '../components/CustomButton';
 import { colors } from '../theme/colors';
 import { Text, View } from 'react-native';
 import { RegisterScreen } from '../screens/RegisterScreen';
+import { SnacksScreen } from '../screens/SnacksScreen';
 
 const Stack = createNativeStackNavigator();
-
-// Pantalla temporal para Snacks
-const PlaceholderScreen = ({ name }: { name: string }) => (
-  <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
-    <Text style={{ color: 'white' }}>Pantalla: {name}</Text>
-  </View>
-);
 
 export default function AppNavigator() {
   return (
@@ -26,6 +20,7 @@ export default function AppNavigator() {
         <Stack.Screen name="Auth" component={LoginScreen} />
         <Stack.Screen name="Main" component={HomeScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="Snacks" component={SnacksScreen} />
         
         {/* Pantalla de Detalles inline) */}
         <Stack.Screen name="Details" children={(props: any) => (
@@ -46,7 +41,7 @@ export default function AppNavigator() {
         )} />
 
         <Stack.Screen name="Booking" component={BookingScreen} />
-        <Stack.Screen name="Snacks" children={() => <PlaceholderScreen name="Selección de Snacks" />} />
+        <Stack.Screen name="Snacks" component={SnacksScreen}/>
         
       </Stack.Navigator>
     </NavigationContainer>

@@ -3,10 +3,13 @@ import { View, Text, StyleSheet, Image, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { CustomInput } from '../components/CustomInput';
 import { CustomButton } from '../components/CustomButton';
+import { useAppDispatch } from '../store/hooks'; 
+import { login } from '../store/authSlice';
 import { colors } from '../theme/colors';
 
 export const LoginScreen = () => {
   const navigation = useNavigation<any>();
+  const dispatch = useAppDispatch();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,9 +35,12 @@ export const LoginScreen = () => {
     return valid;
   };
 
-  const handleLogin = () => {
+   const handleLogin = () => {
     if (validate()) {
-      navigation.replace('Main');
+      dispatch(login({ 
+        name: 'Usuario Cine', 
+        email: email 
+      }));
     } else {
       Alert.alert('Error', 'Por favor revisa los campos marcados en rojo.');
     }
