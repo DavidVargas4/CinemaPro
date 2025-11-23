@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+
+
+import { useAppDispatch } from '../store/hooks';
+import { setUser } from '../store/UserSlice';
+
 import { CustomInput } from '../components/CustomInput';
 import { CustomButton } from '../components/CustomButton';
 import { colors } from '../theme/colors';
 
 export const RegisterScreen = () => {
   const navigation = useNavigation<any>();
+  const dispatch = useAppDispatch(); 
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -15,161 +21,57 @@ export const RegisterScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState<any>({});
 
-  
   const validate = () => {
     let valid = true;
     const tempErrors: any = {};
-
-    if (!name.trim()) {
-      tempErrors.name = 'El nombre es obligatorio';
-      valid = false;
-    }
-
-    const emailRegex = /\S+@\S+\.\S+/;
-    if (!emailRegex.test(email)) {
-      tempErrors.email = 'Ingresa un correo válido';
-      valid = false;
-    }
-
-    // Teléfono (solo números y longitud mínima)
-    const phoneRegex = /^[0-9]{8,12}$/;
-    if (!phoneRegex.test(phone)) {
-      tempErrors.phone = 'Ingresa un teléfono válido (8-12 dígitos)';
-      valid = false;
-    }
-
-    // Contraseña (Mínimo 6 caracteres)
-    if (password.length < 6) {
-      tempErrors.password = 'Mínimo 6 caracteres';
-      valid = false;
-    }
-
-    // Confirmar Contraseña
-    if (password !== confirmPassword) {
-      tempErrors.confirmPassword = 'Las contraseñas no coinciden';
-      valid = false;
-    }
-
+    if (!name.trim()) { tempErrors.name = 'Requerido'; valid = false; }
+    if (!email.includes('@')) { tempErrors.email = 'Inválido'; valid = false; }
+    if (password.length < 6) { tempErrors.password = 'Mínimo 6 caracteres'; valid = false; }
+    if (password !== confirmPassword) { tempErrors.confirmPassword = 'No coinciden'; valid = false; }
     setErrors(tempErrors);
     return valid;
   };
 
   const handleRegister = () => {
     if (validate()) {
-      Alert.alert('¡Éxito!', 'Cuenta creada correctamente', [
-        { text: 'OK', onPress: () => navigation.navigate('Auth') } // Volver al Login
+      
+      dispatch(setUser({
+        name: name,
+        email: email
+      }));
+
+      
+      Alert.alert('Bienvenido', `Cuenta creada para ${name}`, [
+        { text: 'Continuar', onPress: () => navigation.replace('Main') }
       ]);
     } else {
-      Alert.alert('Error', 'Por favor corrige los errores en el formulario');
+      Alert.alert('Error', 'Corrige los campos marcados');
     }
   };
 
   return (
-    <View style={styles.mainContainer}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Crear Cuenta</Text>
-        <Text style={styles.subtitle}>Únete a Cinema Pro</Text>
+        
+        <CustomInput label="Nombre" value={name} onChangeText={setName} error={errors.name} />
+        <CustomInput label="Email" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" error={errors.email} />
+        <CustomInput label="Teléfono" value={phone} onChangeText={setPhone} keyboardType="numeric" />
+        <CustomInput label="Contraseña" value={password} onChangeText={setPassword} isPassword={true} error={errors.password} />
+        <CustomInput label="Confirmar" value={confirmPassword} onChangeText={setConfirmPassword} isPassword={true} error={errors.confirmPassword} />
 
-        {/* Formulario */}
-        <CustomInput
-          label="Nombre Completo"
-          placeholder="Juan Pérez"
-          value={name}
-          onChangeText={setName}
-          error={errors.name}
-          autoCapitalize="words"
-        />
+        <CustomButton title="Registrarse" onPress={handleRegister} />
 
-        <CustomInput
-          label="Correo Electrónico"
-          placeholder="juan@ejemplo.com"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          error={errors.email}
-        />
-
-        <CustomInput
-          label="Teléfono"
-          placeholder="99999999"
-          value={phone}
-          onChangeText={setPhone}
-          keyboardType="numeric" 
-          error={errors.phone}
-        />
-
-        <CustomInput
-          label="Contraseña"
-          placeholder="******"
-          value={password}
-          onChangeText={setPassword}
-          isPassword={true}
-          error={errors.password}
-        />
-
-        <CustomInput
-          label="Confirmar Contraseña"
-          placeholder="******"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          isPassword={true}
-          error={errors.confirmPassword}
-        />
-
-        <View style={styles.buttonContainer}>
-          <CustomButton title="Registrarse" onPress={handleRegister} />
-        </View>
-
-        {/* Enlace para volver al Login */}
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.footerLink}>
-          <Text style={styles.footerText}>
-            ¿Ya tienes cuenta? <Text style={styles.linkHighlight}>Inicia Sesión</Text>
-          </Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{marginTop: 20, alignItems: 'center'}}>
+          <Text style={{color: colors.textDim}}>¿Ya tienes cuenta? <Text style={{color: colors.secondary}}>Inicia Sesión</Text></Text>
         </TouchableOpacity>
-
       </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  scrollContent: {
-    padding: 20,
-    paddingTop: 60,
-    paddingBottom: 40,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: colors.primary,
-    marginBottom: 5,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: colors.textDim,
-    marginBottom: 30,
-    textAlign: 'center',
-  },
-  buttonContainer: {
-    marginTop: 10,
-  },
-  footerLink: {
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  footerText: {
-    color: colors.text,
-    fontSize: 14,
-  },
-  linkHighlight: {
-    color: colors.secondary,
-    fontWeight: 'bold',
-  },
+  container: { flex: 1, backgroundColor: colors.background },
+  content: { padding: 20, paddingTop: 50 },
+  title: { fontSize: 30, fontWeight: 'bold', color: colors.primary, marginBottom: 30, textAlign: 'center' }
 });

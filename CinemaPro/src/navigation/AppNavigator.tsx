@@ -1,13 +1,13 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+
 import { LoginScreen } from '../screens/LoginScreen';
-import { HomeScreen } from '../screens/HomeScreen';
-import { BookingScreen } from '../screens/BookingScreen';
-import { CustomButton } from '../components/CustomButton';
-import { colors } from '../theme/colors';
-import { Text, View } from 'react-native';
 import { RegisterScreen } from '../screens/RegisterScreen';
+import { HomeScreen } from '../screens/HomeScreen';
+import { DetailsScreen } from '../screens/DetailsScreen'; 
+import BookingScreen from '../screens/BookingScreen';
 import { SnacksScreen } from '../screens/SnacksScreen';
 
 const Stack = createNativeStackNavigator();
@@ -17,8 +17,8 @@ export default function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         
+        {/* Flujo de Autenticación */}
         <Stack.Screen name="Auth" component={LoginScreen} />
-        <Stack.Screen name="Main" component={HomeScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Snacks" component={SnacksScreen} />
         
@@ -40,10 +40,16 @@ export default function AppNavigator() {
           </View>
         )} />
 
+        {/* Flujo Principal */}
+        <Stack.Screen name="Main" component={HomeScreen} />
+        <Stack.Screen name="Details" component={DetailsScreen} />
         <Stack.Screen name="Booking" component={BookingScreen} />
+        <Stack.Screen name="Snacks" component={SnacksScreen} />
+
         <Stack.Screen name="Snacks" component={SnacksScreen}/>
         
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+

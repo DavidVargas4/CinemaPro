@@ -6,6 +6,7 @@ import { setMovieTitle, setSelectedSeats } from '../store/bookingSlice';
 import { CustomButton } from '../components/CustomButton';
 import { colors } from '../theme/colors';
 
+
 // para identificar las filas
 const ROW_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
@@ -13,11 +14,34 @@ export const BookingScreen = () => {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   
+  
   // el título de la película desde la navegación anterior
   const { movieTitle } = route.params || { movieTitle: 'Película' };
 
   const dispatch = useAppDispatch();
 
+
+  const [seats, setSeats] = useState([
+    [0, 0, 1, 1, 0, 0], 
+    [0, 0, 0, 0, 0, 0], 
+    [1, 1, 0, 0, 1, 1], 
+    [0, 2, 2, 0, 0, 0], 
+  ]);
+
+  const toggleSeat = (rowIndex: number, colIndex: number) => {
+    const newSeats = [...seats]; 
+    const currentStatus = newSeats[rowIndex][colIndex];
+    
+    if (currentStatus === 1) return; 
+
+    
+    newSeats[rowIndex][colIndex] = currentStatus === 0 ? 2 : 0;
+    setSeats([...newSeats]);
+  };
+
+  
+  const handleContinue = () => {
+    
   // Estado de los asientos (Matriz 4x6)
   // 0: Libre, 1: Ocupado (No disponible), 2: Seleccionado (Por ti)
   const [seats, setSeats] = useState([
@@ -47,6 +71,7 @@ export const BookingScreen = () => {
     seats.forEach((row, rowIndex) => {
       row.forEach((status, colIndex) => {
         if (status === 2) {
+          
           // ROW_LETTERS[0] es 'A', colIndex+1 es el número
           const seatName = `${ROW_LETTERS[rowIndex]}${colIndex + 1}`;
           selectedSeatsList.push(seatName);
@@ -54,6 +79,7 @@ export const BookingScreen = () => {
       });
     });
 
+    
     // Debe haber al menos 1 asiento
     if (selectedSeatsList.length === 0) {
       Alert.alert('Atención', 'Por favor selecciona al menos un asiento.');
@@ -77,6 +103,32 @@ export const BookingScreen = () => {
           <View style={styles.screenLine} />
           <Text style={styles.screenText}>PANTALLA</Text>
         </View>
+
+        {/* Grid de Asientos */}
+        <View style={styles.gridContainer}>
+          {seats.map((row, rowIndex) => (
+            <View key={rowIndex} style={styles.rowContainer}>
+              {/* Letra de la fila a la izquierda */}
+              <Text style={styles.rowLabel}>{ROW_LETTERS[rowIndex]}</Text>
+              
+              <View style={styles.seatsRow}>
+                {row.map((status, colIndex) => (
+                  <TouchableOpacity
+                    key={`${rowIndex}-${colIndex}`}
+                    onPress={() => toggleSeat(rowIndex, colIndex)}
+                    style={[
+                      styles.seat,
+                      status === 1 && styles.seatOccupied, 
+                      status === 2 && styles.seatSelected, 
+                    ]}
+                    disabled={status === 1} 
+                  />
+                ))}
+              </View>
+            </View>
+          ))}
+        </View>
+
 
         {/* Grid de Asientos */}
         <View style={styles.gridContainer}>
@@ -137,6 +189,7 @@ const styles = StyleSheet.create({
   title: { color: colors.text, fontSize: 24, fontWeight: 'bold', marginTop: 20 },
   subtitle: { color: colors.textDim, fontSize: 18, marginBottom: 30 },
 
+  
   // Pantalla curvada visual
   screenContainer: { alignItems: 'center', marginBottom: 30, width: '100%' },
   screenLine: { 
@@ -151,6 +204,18 @@ const styles = StyleSheet.create({
   rowLabel: { color: colors.textDim, width: 20, fontWeight: 'bold', marginRight: 10 },
   seatsRow: { flexDirection: 'row' },
   
+  
+  seat: {
+    width: 32, height: 32,
+    backgroundColor: '#3A3A3A',  
+    marginHorizontal: 4,
+    borderRadius: 6,
+    borderTopLeftRadius: 10, borderTopRightRadius: 10 
+  },
+  seatOccupied: { backgroundColor: '#1A1A1A', borderColor: '#333', borderWidth: 1 },
+  seatSelected: { backgroundColor: colors.secondary }, 
+
+ 
   // Asientos individuales
   seat: {
     width: 32, height: 32,

@@ -6,6 +6,7 @@ import { clearBooking } from '../store/bookingSlice';
 import { CustomButton } from '../components/CustomButton';
 import { colors } from '../theme/colors';
 
+
 // tipo base de datos
 const SNACKS_DATA = [
   { 
@@ -49,6 +50,13 @@ export const SnacksScreen = () => {
   const navigation = useNavigation<any>();
   const dispatch = useAppDispatch();
 
+  const user = useAppSelector(state => state.user);      
+  const booking = useAppSelector(state => state.booking); 
+
+ 
+  const [cart, setCart] = useState<{ [key: string]: number }>({});
+
+ 
   const user = useAppSelector(state => state.user);      // Slice 1: Datos del cliente
   const booking = useAppSelector(state => state.booking); // Slice 2: Datos de la peli/asientos
 
@@ -60,6 +68,7 @@ export const SnacksScreen = () => {
     setCart(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
   };
 
+  
   // Quitar item
   const removeItem = (id: string) => {
     setCart(prev => {
@@ -79,6 +88,9 @@ export const SnacksScreen = () => {
     return total.toFixed(2);
   };
 
+  
+  const handleCheckout = () => {
+    
   // FINALIZA COMPRA 
   const handleCheckout = () => {
     // Obtenemos resumen de snacks seleccionados para el mensaje
@@ -91,6 +103,9 @@ export const SnacksScreen = () => {
 
     Alert.alert(
       '¡Compra Exitosa!',
+      `Cliente: ${user.name}\n` +                    
+      `Película: ${booking.movieTitle}\n` +            
+      `Asientos: ${booking.selectedSeats.join(', ')}` + 
       `Cliente: ${user.name}\n` +                     // Dato de Redux (User)
       `Película: ${booking.movieTitle}\n` +            // Dato de Redux (Booking)
       `Asientos: ${booking.selectedSeats.join(', ')}` + // Dato de Redux (Booking)
@@ -100,6 +115,9 @@ export const SnacksScreen = () => {
         { 
           text: 'Finalizar', 
           onPress: () => {
+            
+            dispatch(clearBooking()); 
+           
             // Limpia la reserva en Redux para la próxima vez
             dispatch(clearBooking()); 
             // Volvemos al inicio
