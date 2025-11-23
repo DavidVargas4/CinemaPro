@@ -7,19 +7,15 @@ import { colors } from '../theme/colors';
 export const DetailsScreen = () => {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
-  
-  
-  const { movieId, title, poster, genre } = route.params || {};
+  const { movieId, title, poster, genre, synopsis } = route.params || {};
 
   const handleBook = () => {
-   
     navigation.navigate('Booking', { movieTitle: title });
   };
 
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Poster Grande */}
         <Image 
           source={{ uri: poster || 'https://via.placeholder.com/300x450' }} 
           style={styles.poster}
@@ -37,15 +33,14 @@ export const DetailsScreen = () => {
           </View>
 
           <Text style={styles.sectionTitle}>Sinopsis</Text>
+
           <Text style={styles.synopsis}>
-            Esta es una descripción simulada de la película. En una aplicación real, 
-            aquí iría el resumen de la trama, información sobre el director y el reparto principal. 
-            ¡Prepárate para una experiencia cinematográfica inolvidable en Cinema Pro!
+            {synopsis || 'Descripción no disponible por el momento.'}
           </Text>
+        
         </View>
       </ScrollView>
 
-      {/* Botón fijo abajo */}
       <View style={styles.footer}>
         <CustomButton title="Seleccionar Asientos" onPress={handleBook} />
       </View>
@@ -57,13 +52,25 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   scrollContent: { paddingBottom: 100 }, 
   poster: { width: '100%', height: 450 },
-  infoContainer: { padding: 20, marginTop: -20, backgroundColor: colors.background, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
+  infoContainer: { 
+    padding: 20, 
+    marginTop: -20, 
+    backgroundColor: colors.background, 
+    borderTopLeftRadius: 20, 
+    borderTopRightRadius: 20 
+  },
   title: { color: colors.text, fontSize: 28, fontWeight: 'bold', marginBottom: 10 },
   tagsRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 20, gap: 15 },
   genreTag: { backgroundColor: '#333', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 5 },
   genreText: { color: colors.textDim, fontSize: 12 },
   duration: { color: colors.textDim, fontSize: 14 },
   sectionTitle: { color: colors.text, fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
-  synopsis: { color: colors.textDim, lineHeight: 22, fontSize: 14 },
+  synopsis: { 
+    color: colors.textDim, 
+    lineHeight: 24, 
+    fontSize: 15, 
+    textAlign: 'justify' 
+  },
+  
   footer: { position: 'absolute', bottom: 0, width: '100%', padding: 20, backgroundColor: colors.background, borderTopWidth: 1, borderTopColor: '#333' },
 });

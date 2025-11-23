@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, Alert, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { CustomInput } from '../components/CustomInput';
-import { CustomButton } from '../components/CustomButton';
-import { useAppDispatch } from '../store/hooks'; 
+import { useAppDispatch } from '../store/hooks';
 import { setUser } from '../store/UserSlice';
-import { login } from '../store/authSlice';
+import { CustomButton } from '../components/CustomButton';
 import { colors } from '../theme/colors';
+import { CustomInput } from '../components/CustomInput';
+
+// base de datos (Usuarios "registrados")
+const MOCK_USERS = [
+  { email: 'usuario@cine.com', password: 'password123', name: 'Usuario Demo' },
+  { email: 'profe@cine.com', password: 'admin', name: 'Doe' }
+];
 
 export const LoginScreen = () => {
   const navigation = useNavigation<any>();
@@ -16,42 +21,69 @@ export const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
-  const validate = () => {
+  const validateFormat = () => {
     let valid = true;
     const tempErrors: any = {};
-
     const emailRegex = /\S+@\S+\.\S+/;
-
+    
     if (!emailRegex.test(email)) {
-      tempErrors.email = 'Ingresa un correo válido';
+      tempErrors.email = 'Formato de correo inválido';
       valid = false;
     }
-
-    if (password.length < 6) {
-      tempErrors.password = 'Mínimo 6 caracteres';
+    if (password.length < 1) {
+      tempErrors.password = 'Ingresa tu contraseña';
       valid = false;
     }
-
     setErrors(tempErrors);
     return valid;
   };
 
-   const handleLogin = () => {
-    if (validate()) {
-      dispatch(setUser({ 
-      dispatch(login({ 
-        name: 'Usuario Cine', 
-        email: email 
-      }));
-    } else {
-      Alert.alert('Error', 'Por favor revisa los campos marcados en rojo.');
+  const handleLogin = () => {
+    if (!validateFormat()) return;
+    const userFound = MOCK_USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+    if (!userFound) {
+      // Si el correo no existe
+      Alert.alert(
+        'Cuenta no encontrada', 
+        'No tenemos registro de este correo electrónico. \n\nPuedes crear una cuenta nueva o ingresar como invitado.',
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Crear Cuenta', onPress: () => navigation.navigate('Register') },
+          { text: 'Entrar como Invitado', onPress: handleGuest }
+        ]
+      );
+      return;
     }
+
+    if (userFound.password !== password) {
+      // Correo existe, pero contraseña es incorrecta
+      Alert.alert('Error', 'La contraseña es incorrecta.');
+      return;
+    }
+
+    // Si fue successful
+    dispatch(setUser({ name: userFound.name, email: userFound.email }));
+    navigation.replace('Main');
+  };
+
+  // para modo invitado
+  const handleGuest = () => {
+    // perfil genérico en Redux
+    dispatch(setUser({ 
+      name: 'Visitante', 
+      email: 'invitado@cine.com' 
+    }));
+    
+    Alert.alert('Modo Invitado', 'Bienvenido. Algunas funciones pueden estar limitadas.', [
+      { text: 'Entendido', onPress: () => navigation.replace('Main') }
+    ]);
   };
 
   return (
     <View style={styles.container}>
       <Image
-        source={require('../../assets/logo_app.png')} 
+        source={require('../../assets/icon.png')} 
         style={styles.logo}
         resizeMode="contain"
       />
@@ -63,9 +95,9 @@ export const LoginScreen = () => {
         placeholder="usuario@cine.com"
         value={email}
         onChangeText={setEmail}
-        error={errors.email}
         keyboardType="email-address"
-        autoCapitalize="none" 
+        autoCapitalize="none"
+        error={errors.email}
       />
 
       <CustomInput
@@ -73,21 +105,41 @@ export const LoginScreen = () => {
         placeholder="******"
         value={password}
         onChangeText={setPassword}
-        error={errors.password}
         isPassword={true}
+        error={errors.password}
       />
 
+      {/* BOTÓN PRINCIPAL: LOGIN */}
       <CustomButton 
         title="Iniciar Sesión" 
         onPress={handleLogin} 
       />
-      
+
+      <View style={styles.dividerContainer}>
+        <View style={styles.line} />
+        <Text style={styles.orText}>O</Text>
+        <View style={styles.line} />
+      </View>
+
+      {/* BOTÓN SECUNDARIO: INVITADO */}
       <CustomButton 
-        title="Crear Cuenta" 
+        title="Continuar como Invitado" 
         variant="secondary" 
-        onPress={() => Alert.alert('Info', 'Funcionalidad de registro pendiente')} 
+        onPress={handleGuest} 
       />
 
+      <TouchableOpacity 
+        style={styles.registerLink} 
+        onPress={() => navigation.navigate('Register')}
+      >
+        <Text style={styles.footerText}>
+          ¿No tienes cuenta? <Text style={styles.linkText}>Regístrate aquí</Text>
+        </Text>
+      </TouchableOpacity>
+
+      <Text style={styles.hintText}>
+        (Demo: usuario@cine.com / password123)
+      </Text>
     </View>
   );
 };
@@ -97,14 +149,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
     padding: 20,
-    justifyContent: 'center', 
-    alignItems: 'center',     
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: 100,
+    height: 100,
     marginBottom: 20,
-    tintColor: colors.primary, 
+    tintColor: colors.primary,
   },
   title: {
     fontSize: 32,
@@ -112,4 +164,40 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 40,
   },
+  
+  // Estilos del divisor "--- O ---"
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    marginVertical: 20,
+  },
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#333',
+  },
+  orText: {
+    color: colors.textDim,
+    paddingHorizontal: 10,
+    fontSize: 14,
+  },
+
+  registerLink: {
+    marginTop: 20,
+  },
+  footerText: {
+    color: colors.textDim,
+    fontSize: 15,
+  },
+  linkText: {
+    color: colors.secondary,
+    fontWeight: 'bold',
+  },
+  hintText: {
+    position: 'absolute',
+    bottom: 10,
+    color: '#333',
+    fontSize: 10
+  }
 });

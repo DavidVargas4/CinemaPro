@@ -6,16 +6,28 @@ import { useAppSelector } from '../store/hooks';
 
 const MOVIES = [
   { 
-    id: '1', title: 'Frankenstein', genre: 'Sci-Fi', vip: true, 
-    poster: 'https://s3.amazonaws.com/nightjarprod/content/uploads/sites/130/2025/08/31180656/frankenstein-2025-poster.jpg'
+    id: '1', 
+    title: 'Frankenstein', 
+    genre: 'Sci-Fi', 
+    vip: true, 
+    poster: 'https://s3.amazonaws.com/nightjarprod/content/uploads/sites/130/2025/08/31180656/frankenstein-2025-poster.jpg',
+    synopsis: "En esta reinvención futurista ambientada en 2025, el Dr. Victor Frankenstein utiliza biotecnología prohibida y cibernética avanzada para resucitar a los muertos. Pero su creación, una amalgama de carne y acero, escapa de su control, buscando venganza en una sociedad que lo considera un monstruo. Una historia sobre la ética de la IA y el horror de jugar a ser Dios."
   },
   { 
-    id: '2', title: 'Wicked: For Good', genre: 'Drama', vip: false,
-    poster: 'https://cdn.cinematerial.com/p/297x/vnc0anwp/wicked-for-good-movie-poster-md.jpg?v=1761059702'
+    id: '2', 
+    title: 'Wicked: For Good', 
+    genre: 'Drama', 
+    vip: false,
+    poster: 'https://cdn.cinematerial.com/p/297x/vnc0anwp/wicked-for-good-movie-poster-md.jpg?v=1761059702',
+    synopsis: "La historia no contada de las brujas de Oz llega a su clímax emocional. Elphaba, incomprendida por su piel verde, y Glinda, popular y ambiciosa, deben enfrentar las consecuencias de sus decisiones. Mientras fuerzas oscuras amenazan Oz, descubrirán que su amistad las ha cambiado... para siempre."
   },
   { 
-    id: '3', title: 'Now You See Me 3', genre: 'Crime', vip: true,
-    poster: 'https://m.media-amazon.com/images/M/MV5BYmZmZDc1Y2EtMmU2MS00NmMzLTllZmYtNjlkODFkNjZlOGE0XkEyXkFqcGc@._V1_QL75_UX190_CR0,0,190,281_.jpg'
+    id: '3', 
+    title: 'Now You See Me 3', 
+    genre: 'Action', 
+    vip: true,
+    poster: 'https://m.media-amazon.com/images/M/MV5BYmZmZDc1Y2EtMmU2MS00NmMzLTllZmYtNjlkODFkNjZlOGE0XkEyXkFqcGc@._V1_QL75_UX190_CR0,0,190,281_.jpg',
+    synopsis: "Los Cuatro Jinetes regresan para su acto más audaz hasta la fecha. Con una nueva generación de magos y trucos que desafían la realidad, el equipo debe exponer una conspiración tecnológica global. Pero esta vez, la línea entre la ilusión y la realidad se desdibuja, y el gran truco final podría costarles la vida."
   },
 ];
 
@@ -27,11 +39,12 @@ export const HomeScreen = () => {
     <TouchableOpacity 
       style={styles.card}
       onPress={() => navigation.navigate('Details', { 
-           movieId: item.id, 
-           title: item.title,
-           poster: item.poster,
-           genre: item.genre   
-    })}
+        movieId: item.id, 
+        title: item.title,
+        poster: item.poster,
+        genre: item.genre,
+        synopsis: item.synopsis
+      })}
     >
       <Image 
         source={{ uri: item.poster }} 
@@ -87,7 +100,6 @@ const styles = StyleSheet.create({
   },
   welcomeText: { 
     color: colors.secondary, 
-    color: colors.secondary, // color secundario para resaltar el nombre
     fontSize: 18, 
     marginBottom: 20 
   },

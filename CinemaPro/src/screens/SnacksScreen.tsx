@@ -6,7 +6,6 @@ import { clearBooking } from '../store/bookingSlice';
 import { CustomButton } from '../components/CustomButton';
 import { colors } from '../theme/colors';
 
-
 // tipo base de datos
 const SNACKS_DATA = [
   { 
@@ -34,7 +33,7 @@ const SNACKS_DATA = [
     id: '4', 
     name: 'Hot Dog Clásico', 
     price: 5.00, 
-    image: 'https://png.pngtree.com/png-clipart/20230409/ourmid/pngtree-hot-dog-grill-with-mustard-isolated-png-image_6696315.png',
+    image: 'https://img.freepik.com/free-photo/classic-hot-dog-with-ketchup-mustard-sauce-isolated-white-background_123827-29747.jpg?semt=ais_hybrid&w=740&q=80',
     desc: 'Ketchup y Mostaza'
   },
   { 
@@ -45,31 +44,20 @@ const SNACKS_DATA = [
     desc: 'Barra de chocolate con leche'
   },
 ];
-
 export const SnacksScreen = () => {
   const navigation = useNavigation<any>();
   const dispatch = useAppDispatch();
 
-  const user = useAppSelector(state => state.user);      
-  const booking = useAppSelector(state => state.booking); 
+  const user = useAppSelector(state => state.user);
+  const booking = useAppSelector(state => state.booking);
+  
 
- 
   const [cart, setCart] = useState<{ [key: string]: number }>({});
 
- 
-  const user = useAppSelector(state => state.user);      // Slice 1: Datos del cliente
-  const booking = useAppSelector(state => state.booking); // Slice 2: Datos de la peli/asientos
-
-  // estado local del carrito
-  const [cart, setCart] = useState<{ [key: string]: number }>({});
-
-  // Añadir item
   const addItem = (id: string) => {
     setCart(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
   };
 
-  
-  // Quitar item
   const removeItem = (id: string) => {
     setCart(prev => {
       const current = prev[id] || 0;
@@ -78,7 +66,6 @@ export const SnacksScreen = () => {
     });
   };
 
-  // Total Monetario
   const calculateTotal = () => {
     let total = 0;
     SNACKS_DATA.forEach(item => {
@@ -88,44 +75,18 @@ export const SnacksScreen = () => {
     return total.toFixed(2);
   };
 
-  
   const handleCheckout = () => {
-    
-  // FINALIZA COMPRA 
-  const handleCheckout = () => {
-    // Obtenemos resumen de snacks seleccionados para el mensaje
-    const snacksResumen = SNACKS_DATA
+    const snackList = SNACKS_DATA
       .filter(item => cart[item.id] > 0)
-      .map(item => `${cart[item.id]}x ${item.name}`)
-      .join(', ');
+      .map(item => `${cart[item.id]}x ${item.name}`);
 
-    const mensajeSnacks = snacksResumen ? `\nSnacks: ${snacksResumen}` : '\nSnacks: Ninguno';
+    const total = calculateTotal();
 
-    Alert.alert(
-      '¡Compra Exitosa!',
-      `Cliente: ${user.name}\n` +                    
-      `Película: ${booking.movieTitle}\n` +            
-      `Asientos: ${booking.selectedSeats.join(', ')}` + 
-      `Cliente: ${user.name}\n` +                     // Dato de Redux (User)
-      `Película: ${booking.movieTitle}\n` +            // Dato de Redux (Booking)
-      `Asientos: ${booking.selectedSeats.join(', ')}` + // Dato de Redux (Booking)
-      mensajeSnacks +
-      `\n\nTotal Pagado: $${calculateTotal()}`,
-      [
-        { 
-          text: 'Finalizar', 
-          onPress: () => {
-            
-            dispatch(clearBooking()); 
-           
-            // Limpia la reserva en Redux para la próxima vez
-            dispatch(clearBooking()); 
-            // Volvemos al inicio
-            navigation.navigate('Main'); 
-          } 
-        }
-      ]
-    );
+    navigation.navigate('Checkout', { 
+      cart: cart,
+      snacksTotal: total,
+      snackList: snackList
+    });
   };
 
   const renderItem = ({ item }: any) => {
@@ -188,7 +149,6 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 28, fontWeight: 'bold', color: colors.secondary, paddingHorizontal: 20 },
   subtitle: { fontSize: 16, color: colors.textDim, marginBottom: 20, paddingHorizontal: 20 },
   listContent: { paddingHorizontal: 20, paddingBottom: 120 },
-  
   card: { flexDirection: 'row', backgroundColor: colors.surface, borderRadius: 12, marginBottom: 15, padding: 10, alignItems: 'center' },
   imageContainer: { width: 60, height: 60, backgroundColor: '#333', borderRadius: 8, padding: 5 },
   image: { width: '100%', height: '100%' },
@@ -196,13 +156,11 @@ const styles = StyleSheet.create({
   itemName: { color: colors.text, fontWeight: 'bold', fontSize: 16 },
   itemDesc: { color: colors.textDim, fontSize: 12 },
   itemPrice: { color: colors.secondary, fontWeight: 'bold', marginTop: 4 },
-  
   actionsContainer: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   circleBtn: { width: 30, height: 30, borderRadius: 15, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center' },
   circleBtnDisabled: { backgroundColor: '#444' },
   btnText: { color: 'white', fontWeight: 'bold', fontSize: 18 },
   quantityText: { color: 'white', fontSize: 16, fontWeight: 'bold', minWidth: 20, textAlign: 'center' },
-
   footer: { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: '#252525', padding: 20, borderTopWidth: 1, borderTopColor: '#333' },
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
   totalLabel: { color: colors.textDim, fontSize: 18 },
