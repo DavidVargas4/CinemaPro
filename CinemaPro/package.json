@@ -16,6 +16,7 @@
     "@reduxjs/toolkit": "^2.10.1",
     "expo": "~54.0.25",
     "expo-status-bar": "~3.0.8",
+    "firebase": "^12.6.0",
     "i18n": "^0.15.3",
     "i18n-js": "^4.5.1",
     "react": "19.1.0",

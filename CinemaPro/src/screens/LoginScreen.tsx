@@ -2,16 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, Alert, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAppDispatch } from '../store/hooks';
-import { setUser } from '../store/UserSlice';
+import { setUser } from '../store/UserSlice'; 
 import { CustomButton } from '../components/CustomButton';
 import { colors } from '../theme/colors';
 import { CustomInput } from '../components/CustomInput';
+import { signInWithEmailAndPassword } from 'firebase/auth'; 
+import { doc, getDoc } from 'firebase/firestore'; 
+import { auth, db } from '../services/firebase';
 
-// base de datos (Usuarios "registrados")
-const MOCK_USERS = [
-  { email: 'usuario@cine.com', password: 'password123', name: 'Usuario Demo' },
-  { email: 'profe@cine.com', password: 'admin', name: 'Doe' }
-];
 
 export const LoginScreen = () => {
   const navigation = useNavigation<any>();
@@ -38,38 +36,45 @@ export const LoginScreen = () => {
     return valid;
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!validateFormat()) return;
-    const userFound = MOCK_USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
 
-    if (!userFound) {
-      // Si el correo no existe
-      Alert.alert(
-        'Cuenta no encontrada', 
-        'No tenemos registro de este correo electrónico. \n\nPuedes crear una cuenta nueva o ingresar como invitado.',
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          { text: 'Crear Cuenta', onPress: () => navigation.navigate('Register') },
-          { text: 'Entrar como Invitado', onPress: handleGuest }
-        ]
-      );
-      return;
+    try {
+      // intento de loguear con Firebase Auth
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Buscar el nombre del usuario en Firestore (Base de datos)
+      // Usamos el UID para encontrar su documento
+      const userDocRef = doc(db, "users", user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      let userName = 'Usuario'; // Nombre por defecto si falla la DB
+      if (userDocSnap.exists()) {
+        userName = userDocSnap.data().name; // Obtenemos el nombre real
+      }
+
+      // 3. Actualizar Redux
+      dispatch(setUser({ name: userName, email: email }));
+      
+      // 4. Entrar
+      navigation.replace('Main');
+
+    } catch (error: any) {
+      console.log(error);
+      // Manejo de errores reales
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+        Alert.alert('Error', 'Correo o contraseña incorrectos.');
+      } else if (error.code === 'auth/too-many-requests') {
+        Alert.alert('Bloqueado', 'Demasiados intentos. Intenta más tarde.');
+      } else {
+        Alert.alert('Error', 'Falló el inicio de sesión: ' + error.message);
+      }
     }
-
-    if (userFound.password !== password) {
-      // Correo existe, pero contraseña es incorrecta
-      Alert.alert('Error', 'La contraseña es incorrecta.');
-      return;
-    }
-
-    // Si fue successful
-    dispatch(setUser({ name: userFound.name, email: userFound.email }));
-    navigation.replace('Main');
   };
 
   // para modo invitado
   const handleGuest = () => {
-    // perfil genérico en Redux
     dispatch(setUser({ 
       name: 'Visitante', 
       email: 'invitado@cine.com' 
@@ -201,3 +206,5 @@ const styles = StyleSheet.create({
     fontSize: 10
   }
 });
+
+export default LoginScreen;

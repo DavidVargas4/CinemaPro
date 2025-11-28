@@ -7,10 +7,13 @@ import { colors } from '../theme/colors';
 export const DetailsScreen = () => {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
-  const { movieId, title, poster, genre, synopsis } = route.params || {};
-
+  const { title, poster, genre, synopsis, hall, duration } = route.params || {};
+  
   const handleBook = () => {
-    navigation.navigate('Booking', { movieTitle: title });
+    navigation.navigate('Booking', { 
+      movieTitle: title,
+      hall: hall 
+    });
   };
 
   return (
@@ -29,15 +32,19 @@ export const DetailsScreen = () => {
             <View style={styles.genreTag}>
               <Text style={styles.genreText}>{genre}</Text>
             </View>
-            <Text style={styles.duration}>2h 15min</Text>
+            
+            {/* 2. AQUÍ MOSTRAMOS LA DURACIÓN REAL */}
+            {/* Si por error no llega el dato, mostramos N/A */}
+            <Text style={styles.duration}>
+               {duration || 'N/A'}
+            </Text>
+          
           </View>
 
           <Text style={styles.sectionTitle}>Sinopsis</Text>
-
           <Text style={styles.synopsis}>
             {synopsis || 'Descripción no disponible por el momento.'}
           </Text>
-        
         </View>
       </ScrollView>
 

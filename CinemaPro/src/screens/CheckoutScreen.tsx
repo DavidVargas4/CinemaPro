@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { clearBooking } from '../store/bookingSlice';
@@ -10,16 +10,22 @@ export const CheckoutScreen = () => {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const dispatch = useAppDispatch();
-  const { cart, snacksTotal, snackList } = route.params || {};
+  const { snacksTotal, snackList } = route.params || {};
   const user = useAppSelector(state => state.user);
   const booking = useAppSelector(state => state.booking);
+  const numTickets = booking.selectedSeats.length;
+  const ticketTotal = numTickets * booking.ticketPrice;
+  const snacksTotalNum = parseFloat(route.params?.snacksTotal || '0');
+  const grandTotal = (ticketTotal + snacksTotalNum).toFixed(2);
 
-  // datos para el QR, string único con la info de la reserva
+  // datos para el QR personalizado
   const reservationData = JSON.stringify({
     u: user.name,
     m: booking.movieTitle,
+    time: booking.showtime, 
+    type: booking.experience, 
     s: booking.selectedSeats,
-    t: `$${(parseFloat(snacksTotal) + 15).toFixed(2)}`
+    total: `$${grandTotal}`
   });
 
   // URL de la API de QR para Expo Go
@@ -44,7 +50,7 @@ export const CheckoutScreen = () => {
         <View style={styles.ticketCard}>
           <View style={styles.ticketHeader}>
             <Text style={styles.movieTitle}>{booking.movieTitle}</Text>
-            <Text style={styles.cinemaName}>Cinema Pro - Sala 4</Text>
+            <Text style={styles.cinemaName}>Cinema Pro - {booking.hall}</Text>
           </View>
 
           {/* Código QR */}
@@ -65,7 +71,17 @@ export const CheckoutScreen = () => {
               <Text style={styles.value}>{user.name}</Text>
             </View>
             <View style={styles.row}>
-              <Text style={styles.label}>Asientos:</Text>
+              <Text style={styles.label}>Experiencia:</Text>
+              <Text style={[styles.value, booking.experience === 'VIP' && {color: colors.secondary}]}>
+                {booking.experience}
+              </Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.label}>Función:</Text>
+              <Text style={styles.value}>{booking.showtime} hrs</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.label}>Asientos ({numTickets}):</Text>
               <Text style={styles.value}>{booking.selectedSeats.join(', ')}</Text>
             </View>
             

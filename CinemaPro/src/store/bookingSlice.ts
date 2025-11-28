@@ -2,27 +2,46 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface BookingState {
     movieTitle: string;
-    selectedSeats: string[]; 
+    selectedSeats: string[];
+    showtime: string;
+    experience: 'Standard' | 'VIP';
+    ticketPrice: number;
+    hall: string;
 }
 
 const initialState: BookingState = {
     movieTitle: "",
-    selectedSeats: []
+    selectedSeats: [],
+    showtime: "",
+    experience: 'Standard',
+    ticketPrice: 0,
+    hall: ""
 };
 
 const bookingSlice = createSlice({
     name: "booking",
     initialState,
     reducers: {
-        setMovieTitle: (state, action: PayloadAction<string>) => {
-            state.movieTitle = action.payload;
+        setBookingDetails: (state, action: PayloadAction<BookingState>) => {
+            state.movieTitle = action.payload.movieTitle;
+            state.selectedSeats = action.payload.selectedSeats;
+            state.showtime = action.payload.showtime;
+            state.experience = action.payload.experience;
+            state.ticketPrice = action.payload.ticketPrice;
+            state.hall = action.payload.hall;
         },
-        setSelectedSeats: (state, action: PayloadAction<string[]>) => {
-            state.selectedSeats = action.payload;
+        clearBooking: () => {
+            return initialState;
         },
-        clearBooking: () => initialState,
+        
+        setMovieTitle: (state, action: PayloadAction<string>) => { 
+            state.movieTitle = action.payload; 
+        },
+        setSelectedSeats: (state, action: PayloadAction<string[]>) => { 
+            state.selectedSeats = action.payload; 
+        }
     },
 });
 
-export const { setMovieTitle, setSelectedSeats, clearBooking } = bookingSlice.actions;
+export const { setBookingDetails, setMovieTitle, setSelectedSeats, clearBooking } = bookingSlice.actions;
 export default bookingSlice.reducer;

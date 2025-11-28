@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react
 import { useNavigation } from '@react-navigation/native';
 import { colors } from '../theme/colors';
 import { useAppSelector } from '../store/hooks';
+import { LogoutButton } from '../components/LogoutButton';
 
 const MOVIES = [
   { 
@@ -11,7 +12,9 @@ const MOVIES = [
     genre: 'Sci-Fi', 
     vip: true, 
     poster: 'https://s3.amazonaws.com/nightjarprod/content/uploads/sites/130/2025/08/31180656/frankenstein-2025-poster.jpg',
-    synopsis: "En esta reinvención futurista ambientada en 2025, el Dr. Victor Frankenstein utiliza biotecnología prohibida y cibernética avanzada para resucitar a los muertos. Pero su creación, una amalgama de carne y acero, escapa de su control, buscando venganza en una sociedad que lo considera un monstruo. Una historia sobre la ética de la IA y el horror de jugar a ser Dios."
+    synopsis: "En esta reinvención futurista ambientada en 2025, el Dr. Victor Frankenstein utiliza biotecnología prohibida y cibernética avanzada para resucitar a los muertos. Pero su creación, una amalgama de carne y acero, escapa de su control, buscando venganza en una sociedad que lo considera un monstruo. Una historia sobre la ética de la IA y el horror de jugar a ser Dios.",
+    hall: 'Sala 3',
+    duration: '2h 30min' 
   },
   { 
     id: '2', 
@@ -19,7 +22,9 @@ const MOVIES = [
     genre: 'Drama', 
     vip: false,
     poster: 'https://cdn.cinematerial.com/p/297x/vnc0anwp/wicked-for-good-movie-poster-md.jpg?v=1761059702',
-    synopsis: "La historia no contada de las brujas de Oz llega a su clímax emocional. Elphaba, incomprendida por su piel verde, y Glinda, popular y ambiciosa, deben enfrentar las consecuencias de sus decisiones. Mientras fuerzas oscuras amenazan Oz, descubrirán que su amistad las ha cambiado... para siempre."
+    synopsis: "La historia no contada de las brujas de Oz llega a su clímax emocional. Elphaba, incomprendida por su piel verde, y Glinda, popular y ambiciosa, deben enfrentar las consecuencias de sus decisiones. Mientras fuerzas oscuras amenazan Oz, descubrirán que su amistad las ha cambiado... para siempre.",
+    hall: 'Sala 2',
+    duration: '2h 17min' 
   },
   { 
     id: '3', 
@@ -27,7 +32,9 @@ const MOVIES = [
     genre: 'Action', 
     vip: true,
     poster: 'https://m.media-amazon.com/images/M/MV5BYmZmZDc1Y2EtMmU2MS00NmMzLTllZmYtNjlkODFkNjZlOGE0XkEyXkFqcGc@._V1_QL75_UX190_CR0,0,190,281_.jpg',
-    synopsis: "Los Cuatro Jinetes regresan para su acto más audaz hasta la fecha. Con una nueva generación de magos y trucos que desafían la realidad, el equipo debe exponer una conspiración tecnológica global. Pero esta vez, la línea entre la ilusión y la realidad se desdibuja, y el gran truco final podría costarles la vida."
+    synopsis: "Los Cuatro Jinetes regresan para su acto más audaz hasta la fecha. Con una nueva generación de magos y trucos que desafían la realidad, el equipo debe exponer una conspiración tecnológica global. Pero esta vez, la línea entre la ilusión y la realidad se desdibuja, y el gran truco final podría costarles la vida.",
+    hall: 'Sala 1',
+    duration: '1h 53min' 
   },
 ];
 
@@ -43,7 +50,9 @@ export const HomeScreen = () => {
         title: item.title,
         poster: item.poster,
         genre: item.genre,
-        synopsis: item.synopsis
+        synopsis: item.synopsis,
+        hall: item.hall,
+        duration: item.duration
       })}
     >
       <Image 
@@ -68,13 +77,15 @@ export const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.headerContainer}>
+      </View>     
       <Text style={styles.headerTitle}>Cartelera</Text>
-      
-      {/* el nombre atraído de Redux */}
       <Text style={styles.welcomeText}>
         Bienvenido, {name || 'Invitado'}
       </Text>
-      
+
+      <LogoutButton />
+    
       <FlatList
         data={MOVIES}
         renderItem={renderItem}
@@ -92,16 +103,21 @@ const styles = StyleSheet.create({
     paddingTop: 50, 
     paddingHorizontal: 20,
   },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', 
+    alignItems: 'flex-start',
+    marginBottom: 10
+  },
   headerTitle: { 
     color: colors.text, 
     fontSize: 28, 
-    fontWeight: 'bold', 
-    marginBottom: 5 
+    fontWeight: 'bold'
   },
   welcomeText: { 
     color: colors.secondary, 
-    fontSize: 18, 
-    marginBottom: 20 
+    fontSize: 16, 
+    marginTop: 2 
   },
   listContent: { paddingBottom: 20 },
   card: {

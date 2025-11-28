@@ -6,6 +6,9 @@ import { setUser } from '../store/UserSlice';
 import { CustomInput } from '../components/CustomInput';
 import { CustomButton } from '../components/CustomButton';
 import { colors } from '../theme/colors';
+import { createUserWithEmailAndPassword } from 'firebase/auth'; 
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../services/firebase'; 
 
 export const RegisterScreen = () => {
   const navigation = useNavigation<any>();
@@ -52,25 +55,44 @@ export const RegisterScreen = () => {
     return valid;
   };
 
-  const handleRegister = () => {
-    if (validate()) {
+  const handleRegister = async () => {
+    if (!validate()) {
+      Alert.alert('Error', 'Corrige los campos marcados');
+      return;
+    }
+
+    try {
+      // usuario en Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // documento en la colección 'users' con el ID del usuario
+      await setDoc(doc(db, "users", user.uid), {
+        name: name,
+        email: email,
+        phone: phone,
+        createdAt: new Date()
+      });
+
       dispatch(setUser({
         name: name,
         email: email
       }));
 
-      Alert.alert(
-        '¡Bienvenido a Cinema Pro!', 
-        `Tu cuenta ha sido creada exitosamente, ${name}.`, 
-        [
-          { 
-            text: 'Ir a la Cartelera', 
-            onPress: () => navigation.replace('Main') 
-          }
-        ]
-      );
-    } else {
-      Alert.alert('Atención', 'Por favor corrige los errores marcados en rojo.');
+      Alert.alert('¡Bienvenido!', 'Cuenta creada exitosamente en la nube.', [
+        { text: 'Continuar', onPress: () => navigation.replace('Main') }
+      ]);
+
+    } catch (error: any) {
+      console.log(error);
+      // Manejo de errores comunes de Firebase
+      if (error.code === 'auth/email-already-in-use') {
+        Alert.alert('Error', 'Ese correo ya está registrado.');
+      } else if (error.code === 'auth/weak-password') {
+        Alert.alert('Error', 'La contraseña es muy débil.');
+      } else {
+        Alert.alert('Error', 'No se pudo crear la cuenta: ' + error.message);
+      }
     }
   };
 
